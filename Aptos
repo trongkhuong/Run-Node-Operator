@@ -1,0 +1,13 @@
+How to update aptos node with docker compose:
+
+1. sudo su
+2. cd ~/aptos
+3. docker compose down
+4. rm -r /var/lib/docker/volumes/aptos_db/_data/db
+5. rm genesis.blob
+6. rm waypoint.txt
+7. docker compose pull
+8. wget https://devnet.aptoslabs.com/genesis.blob
+9. wget https://devnet.aptoslabs.com/waypoint.txt
+10. docker compose up -d
+
