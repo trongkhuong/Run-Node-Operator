@@ -1,0 +1,119 @@
+How to install Starket Node
+Part 1: Install dev tools on your Linux distro
+* First check the version of Python 3 that is installed in the system by typing:
+
+  python3 -V
+
+You’ll receive output in the terminal window that will let you know the version number. While this number may vary, the output will be similar to this:
+* To manage software packages for Python, let’s install pip, a tool that will install and manage programming packages we may want to use later.
+
+  sudo apt install -y python3-pip
+
+* There are a few more packages and development tools to install to ensure that we have a robust setup for our programming environment:
+
+  sudo apt install -y build-essential libssl-dev libffi-dev 
+  python3-dev
+
+Then
+
+  sudo apt-get install libgmp-dev
+
+And then
+
+  pip3 install fastecdsa
+
+Now you have fastecdsa (a python tool for doing fast elliptic curve cryptography, specifically digital signatures) installed. To really not miss something later also run sudo apt-get install -y pkg-config
+
+Part 2: Install Rust
+* We also need to install Rust programming language and its tools since Equilibrium node is built in Rust.
+
+Run
+
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+* Just in case if there was something left uninstalled in previous step then run
+
+  sudo apt install cargo
+
+
+* Update your Rust to the latest version
+
+  rustup update stable
+
+Part 3: Clone pathfinder github repository
+Congratulations, you now made it to the part where we will actually start preparing environment for our node.
+Create a local copy of pathfinder’s github repository by typing:
+
+  git clone --branch v0.1.2-alpha https://github.com/eqlabs/pathfinder.git
+
+Replace v0.1.3-alpha with newer version if that exists. You check that by visiting pathfinder’s repo.
+Output will look something like below. Don’t worry about detached HEAD state. This simply means you cannot impact active development of the pathfinder code.
+
+
+Part 4: Create a virtual environment for a node
+* Install a tool that will enable us to create virtual environment in which our node will run:
+
+  sudo apt install python3.8-venv
+
+* Move to py folder by typing
+
+  cd pathfinder/py
+
+
+* Create the virtual environment called venv
+
+  python3 -m venv .venv
+
+and activate it
+
+  source .venv/bin/activate
+
+You will know that you are in your virtual environment when you will see (.venv) on the left side of you command line:
+
+
+* Install some more tools for our node by running
+
+  PIP_REQUIRE_VIRTUALENV=true pip install --upgrade pip
+
+then
+
+  PIP_REQUIRE_VIRTUALENV=true pip install -r requirements-dev.txt
+
+
+* Test if your previous steps were successful by running
+
+  pytest
+
+Your output should look something like this:
+
+
+
+Part 6: Assemble your node
+You can compile your node by running the following command. Please stay in your virtual environment (venv) for this step. You will also be running your node from venv.
+
+  cargo build --release --bin pathfinder
+
+This step will take a bit longer than the others (up to 30 minutes depending on your system configuration).
+
+
+Part 7: Create Infura or Alchemy account
+If you want to run a node on Layer 2 (StarkNet) you will also need to know what is happening on Layer 1 since your node will calculate StarkNet state’s root and confirm it against L1.
+Thus, we need to access L1 full archive node. You can do that by connecting to your L1 node or if you don’t run one set up an account with a third party API provider like Infura, Alchemy, ArchiveNode or QuikNode.
+
+Alchemy
+* Go to alchemy.com and sing up
+* On your dashboard click on Create App
+* Give your new app a name and choose either Mainnet or Goerli Network
+* You will now be able to see the endpoint on your dashboard. Copy the https one.
+
+Part 8: Run your node
+There is only one thing left to do → to run your first node on Layer 2!
+You can test run your node by typing (replace the xxxxx with your Infura endpoint number)
+
+  cargo run --release --bin pathfinder -- --ethereum.url https://mainnet.infura.io/v3/xxxxx
+
+or in case you are using Alchemy API (replace the xxxxx with your Alchemy API key)
+
+  cargo run --release --bin pathfinder -- --ethereum.url https://eth-goerli.alchemyapi.io/v2/xxxxx
+
+Please make sure that you are in your pathfinder/py folder and have your virtual environment activated in order to successfully run the node.
